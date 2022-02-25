@@ -1,7 +1,8 @@
 # URI parser
 #### Description
-Lo scopo del programma è quello di rappresentare in strutture, facilmente leggibili, delle stringhe inserite dall'utente che rappresentano URI.
-L'URI viene scomposta nei seguenti campi:
+The goal of this program is to represent an input URI string in easily readable structures.
+
+The URI is broken down into the following fields:
 - Scheme
 - Userinfo
 - Host
@@ -10,6 +11,11 @@ L'URI viene scomposta nei seguenti campi:
 - Query
 - Fragment
 
+Il parser supporta anche le seguenti sintassi speciali:
+- **mailto** supporta un indirizzo e-mail composto da: [userinfo ['@' host]
+- **news** composta da: [host]
+- **tel/fax** supporta un numero di telefono composto da: [userinfo]
+- **zos scheme** supporta i nomi di data-sets su mainframes IBM.
 
 ## Lisp
 Il **parser** è stato sviluppato in **Lisp** utilizzando esclusivamente la ricorsione, senza l'utilizzo di "Substring" o simili e rispettando la trasparenza referenziale.
