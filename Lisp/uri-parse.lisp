@@ -1,6 +1,3 @@
-;;;; Mauriello Andrea 869604
-;;;; Strada Matteo 869143
-
 (defstruct uri-structure
   scheme
   userinfo
