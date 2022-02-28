@@ -1,6 +1,3 @@
-% Mauriello Andrea 869604
-% Strada Matteo 869143
-
 check([]).
 
 verifica(['/' | _]).
