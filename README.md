@@ -11,35 +11,34 @@ The URI is broken down into the following fields:
 - Query
 - Fragment
 
-Il parser supporta anche le seguenti sintassi speciali:
-- **mailto** supporta un indirizzo e-mail composto da: [userinfo ['@' host] ]
-- **news** composta da: [host]
-- **tel/fax** supporta un numero di telefono composto da: [userinfo]
-- **zos scheme** supporta i nomi di data-sets su mainframes IBM.
+The parser also supports the following special syntax:
+- **mailto** supports an email address composed of: [userinfo ['@' host] ]
+- **news** composed of: [host]
+- **tel/fax** supports a phone number composed of: [userinfo]
+- **zos scheme** supports data-set names on IBM mainframes.
 
 ## Lisp
-Il **parser** è stato sviluppato in **Lisp** utilizzando esclusivamente la ricorsione, senza l'utilizzo di "Substring" o simili e rispettando la trasparenza referenziale.
+The **parser** has been developed in **Lisp** using only recursion, without the use of "Substring" or similar, and respecting referential transparency.
 
-La **sintassi** per utilizzare il programma  è la seguente:
+The **syntax** for using the program is as follows:
 
 ```lisp
 (uri-parse "URIstring")
 ```
 
-Se la stringa passata in input è accettata, l'output sarà stampato nel seguente modo:
+If the input string is accepted, the output will be printed in the following way:
 
 ```lisp
 #S(URI :SCHEME-CAMPO SCHEME :USERINFO-CAMPO USERINFO :HOST-CAMPO HOST :PORT-CAMPO PORT :PATH-CAMPO PATH :QUERY-CAMPO QUERY :FRAGMENT-CAMPO FRAGMENT)
 ```
 
-Tutti i campi ritornati sono **stringhe**, tranne **port** che è gestito come **numero**.
+All returned fields are **strings**, except for **port** which is handled as a **number**.
 
-Se alcuni **campi opzionali** non sono presenti nella stringa URI passata in input, verranno rappresentati con `NIL`. Eccezion fatta per la porta che ha 80 come **default value**.
+If some **optional fields** are not present in the input URI string, they will be represented with `NIL`. The exception is the port, which has 80 as its **default value**.
 
-Se la stringa URI passata in input **non è sintatticamente corretta**, verrà ritornato `NIL`.
-Se, invece, la stringa in input **non è di tipo URI** verrà ritornato un `error`.
+If the input URI string **is not syntactically correct**, `NIL` will be returned. If instead, the input string **is not a URI type**, an `error` will be returned.
 
-Esempio:
+Example:
 ```lisp
 (uri-parse "https://www.google.com")
 #S(URI :SCHEME-CAMPO "https" :USERINFO-CAMPO NIL :HOST-CAMPO "www.google.com" :PORT-CAMPO 80 :PATH-CAMPO NIL :QUERY-CAMPO NIL :FRAGMENT-CAMPO NIL)
@@ -47,62 +46,44 @@ Esempio:
 
 
 
-Un possibile metodo stampare l'URI su uno Stream:
+A possible method to print the URI on a Stream:
 
 ```
-(with-open-file (stream Percorso
+(with-open-file (stream Path
                         :direction :output
                         :if-exists :supersede
                         :if-does-not-exist :create)
-  (uri-display (uri-parse stringaURI) stream))
+  (uri-display (uri-parse URIstring) stream))
 ```
 
-Per stampare l'URI su **standard output**:
+To print the URI to **standard output**:
 
 ```lisp
-(uri-display (uri-parse stringaURI))
+(uri-display (uri-parse URIstring))
 ```
 ## Prolog
-Il **parser** è stato sviluppato in **Prolog** utilizzando esclusivamente la ricorsione, senza l'utilizzo di "Substring" o simili.
+The **parser** has been developed in **Prolog** using only recursion, without the use of "Substring" or similar.
 
-La **sintassi** è la seguente:
+The **syntax** is as follows:
 
 ```prolog
-uri_parse("stringaURI", URI).
+uri_parse("URIstring", URI).
 ```
 
-Se la stringa passata in input è una **URI** ed è corretta, verrà ritornato:
+If the input string is a **URI** and is correct, the following will be returned:
 
 ```prolog
 URI = uri(Scheme, Userinfo, Host, Port, Path, Query, Fragment).
 ```
 
-Tutti i campi ritornati sono **atomi**, tranne **port** che è un **numero**.
+All returned fields are **atoms**, except for **port** which is a **number**.
 
-Il **campo host** cerca, inizialmente, un **indirizzo IP** composto da **quattro terne di digit** comprese tra 0 e 255, se non viene trovato, procede con il verificare che ci sia un **identificatore-host**. Nel caso in cui non venga rispettatta nemmeno questa sintassi, verrà ritornato `false`.
+The **host field** initially looks for an **IP address** composed of **four sets of digits** between 0 and 255. If not found, it proceeds to verify that there is a **host identifier**. If this syntax is not respected, `false` will be returned.
 
-Se alcuni **campi opzionali** non sono presenti nella stringa URI passata in input, verranno rappresentati con **[]**. Eccezion fatta per la porta che ha come **default value** 80.
+If some **optional fields** are not present in the input URI string, they will be represented with **[]**. The exception is the port, which has a **default value** of 80.
 
-Se la stringa URI passata in input non è corretta, verrà ritornato `false`.
+If the input URI string is incorrect, `false` will be returned.
 
-Esempio:
+Example:
 ```prolog
 uri_parse("https://www.google.com", URI).
-URI = uri(https, [], 'www.google.com', 80, [], [], []).
-```
-
-Per stampare l'URI su uno **Stream**:
-
-```prolog
- open('destinazione', 'mode', Stream),
- uri_parse("stringaURI", URI),
- uri_display(URI, Stream),
- close(Stream).
-```
-
-Per stampare l'URI su **standard output**:
-
-```prolog
- uri_parse("stringaURI", URI),
- uri_display(URI).
-```
