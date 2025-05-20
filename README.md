@@ -17,7 +17,6 @@ The parser also supports the following special URI schemes:
 - **tel/fax** — supports a phone number composed of: `[userinfo]`
 - **zos** — supports data-set names on IBM mainframes
 
----
 
 ## Lisp
 The **parser** is implemented in **Lisp**, using only recursion, without relying on functions like `substring`, and adhering to **referential transparency**.
@@ -32,6 +31,7 @@ If the input string is valid, the output will be displayed as:
 ```lisp
 #S(URI :SCHEME-FIELD SCHEME :USERINFO-FIELD USERINFO :HOST-FIELD HOST :PORT-FIELD PORT :PATH-FIELD PATH :QUERY-FIELD QUERY :FRAGMENT-FIELD FRAGMENT)
 ```
+
 
 > ⚠️ Note: The original field names such as `:SCHEME-CAMPO` (italian) have been translated to `:SCHEME-FIELD` for clarity.
 
@@ -62,7 +62,6 @@ To write the parsed URI to a file:
 (uri-display (uri-parse "URIstring"))
 ```
 
----
 
 ## Prolog
 The **parser** is also implemented in **Prolog**, using only recursion and avoiding the use of string manipulation predicates like `substring`.
