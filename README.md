@@ -1,89 +1,90 @@
-# URI parser
-#### Description
-The goal of this program is to represent an input URI string in easily readable structures.
+# URI Parser
+### Description
+The goal of this program is to parse an input URI string and represent it in a clear, structured format.
 
 The URI is broken down into the following fields:
-- Scheme
-- Userinfo
-- Host
-- Port
-- Path
-- Query
-- Fragment
+- **Scheme**
+- **Userinfo**
+- **Host**
+- **Port**
+- **Path**
+- **Query**
+- **Fragment**
 
-The parser also supports the following special syntax:
-- **mailto** supports an email address composed of: [userinfo ['@' host] ]
-- **news** composed of: [host]
-- **tel/fax** supports a phone number composed of: [userinfo]
-- **zos scheme** supports data-set names on IBM mainframes.
+The parser also supports the following special URI schemes:
+- **mailto** — supports an email address composed of: `[userinfo ['@' host]]`
+- **news** — composed of: `[host]`
+- **tel/fax** — supports a phone number composed of: `[userinfo]`
+- **zos** — supports data-set names on IBM mainframes
+
+---
 
 ## Lisp
-The **parser** has been developed in **Lisp** using only recursion, without the use of "Substring" or similar, and respecting referential transparency.
+The **parser** is implemented in **Lisp**, using only recursion, without relying on functions like `substring`, and adhering to **referential transparency**.
 
-The **syntax** for using the program is as follows:
-
+### Syntax
+To use the parser, call:
 ```lisp
 (uri-parse "URIstring")
 ```
 
-If the input string is accepted, the output will be printed in the following way:
-
+If the input string is valid, the output will be displayed as:
 ```lisp
-#S(URI :SCHEME-CAMPO SCHEME :USERINFO-CAMPO USERINFO :HOST-CAMPO HOST :PORT-CAMPO PORT :PATH-CAMPO PATH :QUERY-CAMPO QUERY :FRAGMENT-CAMPO FRAGMENT)
+#S(URI :SCHEME-FIELD SCHEME :USERINFO-FIELD USERINFO :HOST-FIELD HOST :PORT-FIELD PORT :PATH-FIELD PATH :QUERY-FIELD QUERY :FRAGMENT-FIELD FRAGMENT)
 ```
 
-All returned fields are **strings**, except for **port** which is handled as a **number**.
+> ⚠️ Note: The original field names such as `:SCHEME-CAMPO` (italian) have been translated to `:SCHEME-FIELD` for clarity.
 
-If some **optional fields** are not present in the input URI string, they will be represented with `NIL`. The exception is the port, which has 80 as its **default value**.
+- All fields are returned as **strings**, except for the **port**, which is returned as a **number**.
+- If optional fields are not present in the URI, they will be set to `NIL`.
+- The **default port** is `80` if not explicitly specified.
+- If the input string is **not syntactically valid**, `NIL` is returned.
+- If the input is **not a URI**, an **error** is raised.
 
-If the input URI string **is not syntactically correct**, `NIL` will be returned. If instead, the input string **is not a URI type**, an `error` will be returned.
-
-Example:
+#### Example:
 ```lisp
 (uri-parse "https://www.google.com")
-#S(URI :SCHEME-CAMPO "https" :USERINFO-CAMPO NIL :HOST-CAMPO "www.google.com" :PORT-CAMPO 80 :PATH-CAMPO NIL :QUERY-CAMPO NIL :FRAGMENT-CAMPO NIL)
+#S(URI :SCHEME-FIELD "https" :USERINFO-FIELD NIL :HOST-FIELD "www.google.com" :PORT-FIELD 80 :PATH-FIELD NIL :QUERY-FIELD NIL :FRAGMENT-FIELD NIL)
 ```
 
-
-
-A possible method to print the URI on a Stream:
-
-```
-(with-open-file (stream Path
+### Writing to a File
+To write the parsed URI to a file:
+```lisp
+(with-open-file (stream "Path/to/file.txt"
                         :direction :output
                         :if-exists :supersede
                         :if-does-not-exist :create)
-  (uri-display (uri-parse URIstring) stream))
+  (uri-display (uri-parse "URIstring") stream))
 ```
 
-To print the URI to **standard output**:
-
+### Printing to Standard Output
 ```lisp
-(uri-display (uri-parse URIstring))
+(uri-display (uri-parse "URIstring"))
 ```
+
+---
+
 ## Prolog
-The **parser** has been developed in **Prolog** using only recursion, without the use of "Substring" or similar.
+The **parser** is also implemented in **Prolog**, using only recursion and avoiding the use of string manipulation predicates like `substring`.
 
-The **syntax** is as follows:
-
+### Syntax
+To parse a URI in Prolog:
 ```prolog
 uri_parse("URIstring", URI).
 ```
 
-If the input string is a **URI** and is correct, the following will be returned:
-
+If the input string is a valid URI, the result will be unified as:
 ```prolog
 URI = uri(Scheme, Userinfo, Host, Port, Path, Query, Fragment).
 ```
 
-All returned fields are **atoms**, except for **port** which is a **number**.
+- All fields are returned as **atoms**, except for the **port**, which is a **number**.
+- The **host field** first attempts to match an **IP address** consisting of **four octets** (values from 0 to 255). If not found, it checks for a valid **host identifier**.
+- If this structure is not respected, `false` is returned.
+- Optional fields not present in the input will be represented as empty lists `[]`, except for **port**, which defaults to `80`.
+- If the URI is not valid, the result will be `false`.
 
-The **host field** initially looks for an **IP address** composed of **four sets of digits** between 0 and 255. If not found, it proceeds to verify that there is a **host identifier**. If this syntax is not respected, `false` will be returned.
-
-If some **optional fields** are not present in the input URI string, they will be represented with **[]**. The exception is the port, which has a **default value** of 80.
-
-If the input URI string is incorrect, `false` will be returned.
-
-Example:
+#### Example:
 ```prolog
 uri_parse("https://www.google.com", URI).
+```
